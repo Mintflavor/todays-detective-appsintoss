@@ -11,6 +11,7 @@ import { useState } from "react";
 
 import SuspectAvatar from "@/components/common/SuspectAvatar";
 import { submitFeedback } from "@/lib/api";
+import { shareResolution } from "@/lib/appsInToss";
 import { fonts, noir } from "@/styles/theme";
 import type { CaseData, DeductionInput, Evaluation } from "@/types/game";
 
@@ -193,6 +194,19 @@ export default function ResolutionScreen({
         <div css={styles.footerActions}>
           <button css={styles.resetBtn} onClick={onReset}>
             ⟳ 새로운 사건 맡기
+          </button>
+          <button
+            css={styles.feedbackBtn}
+            onClick={() =>
+              shareResolution({
+                title: caseData.title,
+                grade: evaluation.grade,
+                culpritName: evaluation.culpritName,
+                timeTaken: evaluation.timeTaken,
+              })
+            }
+          >
+            📤 수사 결과 공유하기
           </button>
           <button
             css={styles.feedbackBtn}
