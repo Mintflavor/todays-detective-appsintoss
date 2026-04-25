@@ -12,6 +12,7 @@ import { fonts, noir } from "@/styles/theme";
 
 interface TutorialModalProps {
   onComplete: () => void;
+  onBack?: () => void;
 }
 
 const fadeIn = keyframes`
@@ -19,11 +20,24 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0) rotate(1deg); }
 `;
 
-export default function TutorialModal({ onComplete }: TutorialModalProps) {
+export default function TutorialModal({
+  onComplete,
+  onBack,
+}: TutorialModalProps) {
   return (
     <div css={styles.root}>
       <div css={styles.card}>
         <div css={styles.header}>
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              css={styles.backButton}
+              aria-label="뒤로 가기"
+            >
+              ←
+            </button>
+          )}
           <span>📖</span>
           <h2 css={styles.headerTitle}>수사 수칙</h2>
         </div>
@@ -124,6 +138,18 @@ const styles = {
     alignItems: "center",
     gap: 8,
     borderBottom: `4px solid ${noir.amber700}`,
+  }),
+  backButton: css({
+    background: "transparent",
+    border: 0,
+    color: noir.amber100,
+    fontSize: 22,
+    lineHeight: 1,
+    padding: "4px 8px",
+    marginRight: 4,
+    cursor: "pointer",
+    fontFamily: "inherit",
+    "&:active": { opacity: 0.6 },
   }),
   headerTitle: css({
     fontSize: 20,

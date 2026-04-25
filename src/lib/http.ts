@@ -6,7 +6,6 @@
  * Ownership of this code belongs to the author, and some or all of the code below has been written using AI (Claude, Gemini).
  */
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
-export const FASTAPI_BASE_URL = import.meta.env.VITE_FASTAPI_BASE_URL ?? "";
 
 type FetchOptions = Omit<RequestInit, "body"> & {
   json?: unknown;

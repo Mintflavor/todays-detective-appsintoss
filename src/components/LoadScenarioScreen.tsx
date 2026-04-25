@@ -39,15 +39,9 @@ export default function LoadScenarioScreen({
   const [filterCrimeType, setFilterCrimeType] = useState<string>("ALL");
 
   useEffect(() => {
-    setPage(1);
-    fetchScenarios(1, filterCrimeType);
+    fetchScenarios(page, filterCrimeType);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterCrimeType]);
-
-  useEffect(() => {
-    if (page > 1) fetchScenarios(page, filterCrimeType);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [page, filterCrimeType]);
 
   const fetchScenarios = async (pageNum: number, crimeType: string) => {
     setLoading(true);
@@ -86,7 +80,10 @@ export default function LoadScenarioScreen({
           <span css={styles.filterLabel}>🗂</span>
           <select
             value={filterCrimeType}
-            onChange={(e) => setFilterCrimeType(e.target.value)}
+            onChange={(e) => {
+              setFilterCrimeType(e.target.value);
+              setPage(1);
+            }}
             css={styles.filterSelect}
           >
             {CRIME_TYPES.map((c) => (

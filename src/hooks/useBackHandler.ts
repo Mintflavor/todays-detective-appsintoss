@@ -5,20 +5,11 @@
  * Author: Hyunil Park
  * Ownership of this code belongs to the author, and some or all of the code below has been written using AI (Claude, Gemini).
  */
-import { useBackEvent } from "@apps-in-toss/web-framework";
-import { useEffect } from "react";
 
-// 토스앱 네이티브 뒤로가기 버튼을 컴포넌트 단위로 인터셉트
-// enabled=true일 때만 등록되고, 콜백이 호출되면 기본 뒤로가기 동작은 차단됨
-// useBackEvent는 브라우저 환경에서도 안전하게 no-op 컨트롤러를 반환해야 정상
-export default function useBackHandler(handler: () => void, enabled = true) {
-  const backEvent = useBackEvent();
-
-  useEffect(() => {
-    if (!enabled || !backEvent) return;
-    backEvent.addEventListener(handler);
-    return () => {
-      backEvent.removeEventListener(handler);
-    };
-  }, [backEvent, handler, enabled]);
+// 토스앱 네이티브 뒤로가기 버튼 인터셉트용 훅.
+// `@apps-in-toss/web-framework` v2.4.x의 web 빌드에는 `useBackEvent`가 export되지 않으므로
+// (해당 훅은 React Native/Granite native 전용) web 환경에선 no-op로 처리한다.
+// 추후 SDK가 web 빌드에서도 백 이벤트를 노출하거나 native 빌드로 전환할 때 실제 구현으로 교체.
+export default function useBackHandler(_handler: () => void, _enabled = true) {
+  // no-op (web)
 }

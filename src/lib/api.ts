@@ -6,7 +6,7 @@
  * Ownership of this code belongs to the author, and some or all of the code below has been written using AI (Claude, Gemini).
  */
 import type { CaseData } from "@/types/game";
-import { API_BASE_URL, FASTAPI_BASE_URL, fetchJson } from "./http";
+import { API_BASE_URL, fetchJson } from "./http";
 
 export interface ScenarioListItem {
   _id: string;
@@ -45,14 +45,14 @@ export interface SubmitFeedbackPayload {
   gameResult?: FeedbackGameResult;
 }
 
-// --- Scenarios (FastAPI 직접 호출) ---
+// --- Scenarios ---
 
 export async function getScenarios(
   page = 1,
   limit = 10,
   crimeType?: string,
 ): Promise<ScenarioListItem[]> {
-  let url = `${FASTAPI_BASE_URL}/scenarios/?page=${page}&limit=${limit}`;
+  let url = `${API_BASE_URL}/scenarios/?page=${page}&limit=${limit}`;
   if (crimeType && crimeType !== "ALL") {
     url += `&crime_type=${encodeURIComponent(crimeType)}`;
   }
@@ -67,13 +67,13 @@ export async function getScenarioDetail(id: string): Promise<CaseData> {
 
 export async function getScenarioDetailFull(id: string): Promise<CaseData> {
   const data = await fetchJson<{ case_data: CaseData }>(
-    `${FASTAPI_BASE_URL}/scenarios/${id}`,
+    `${API_BASE_URL}/scenarios/${id}`,
   );
   return data.case_data;
 }
 
 export async function deleteScenario(id: string): Promise<void> {
-  await fetchJson<unknown>(`${FASTAPI_BASE_URL}/scenarios/${id}`, {
+  await fetchJson<unknown>(`${API_BASE_URL}/scenarios/${id}`, {
     method: "DELETE",
   });
 }
@@ -94,12 +94,12 @@ export async function getFeedbacks(
   limit = 10,
 ): Promise<FeedbackItem[]> {
   return fetchJson<FeedbackItem[]>(
-    `${FASTAPI_BASE_URL}/feedbacks/?page=${page}&limit=${limit}`,
+    `${API_BASE_URL}/feedbacks/?page=${page}&limit=${limit}`,
   );
 }
 
 export async function deleteFeedback(id: string): Promise<void> {
-  await fetchJson<unknown>(`${FASTAPI_BASE_URL}/feedbacks/${id}`, {
+  await fetchJson<unknown>(`${API_BASE_URL}/feedbacks/${id}`, {
     method: "DELETE",
   });
 }

@@ -15,6 +15,8 @@ import type { CaseData } from "@/types/game";
 interface BriefingScreenProps {
   caseData: CaseData;
   onStartInvestigation: () => void;
+  onBack?: () => void;
+  ctaLabel?: string;
 }
 
 const fadeInUp = keyframes`
@@ -25,6 +27,8 @@ const fadeInUp = keyframes`
 export default function BriefingScreen({
   caseData,
   onStartInvestigation,
+  onBack,
+  ctaLabel = "수사 시작 →",
 }: BriefingScreenProps) {
   const reportTitle =
     caseData.crime_type === "살인" ? "Autopsy Report" : "Incident Report";
@@ -33,9 +37,21 @@ export default function BriefingScreen({
     <div css={styles.root}>
       <div css={styles.card}>
         <header css={styles.header}>
-          <div>
-            <span css={styles.topSecret}>TOP SECRET</span>
-            <h2 css={styles.title}>{caseData.title}</h2>
+          <div css={styles.headerLeft}>
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                css={styles.backButton}
+                aria-label="뒤로 가기"
+              >
+                ←
+              </button>
+            )}
+            <div>
+              <span css={styles.topSecret}>TOP SECRET</span>
+              <h2 css={styles.title}>{caseData.title}</h2>
+            </div>
           </div>
           <div css={styles.stampMark}>⚠</div>
         </header>
@@ -98,7 +114,7 @@ export default function BriefingScreen({
 
         <div css={styles.ctaWrap}>
           <button onClick={onStartInvestigation} css={styles.ctaButton}>
-            수사 시작 →
+            {ctaLabel}
           </button>
         </div>
       </div>
@@ -148,6 +164,26 @@ const styles = {
     borderBottom: "2px solid #1f2937",
     paddingBottom: 16,
     marginBottom: 24,
+  }),
+  headerLeft: css({
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 8,
+    flex: 1,
+    minWidth: 0,
+  }),
+  backButton: css({
+    background: "transparent",
+    border: 0,
+    color: "#1f2937",
+    fontSize: 22,
+    lineHeight: 1,
+    padding: "2px 6px",
+    marginTop: 2,
+    cursor: "pointer",
+    fontFamily: "inherit",
+    flexShrink: 0,
+    "&:active": { opacity: 0.5 },
   }),
   topSecret: css({
     backgroundColor: noir.red800,

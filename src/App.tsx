@@ -5,7 +5,7 @@
  * Author: Hyunil Park
  * Ownership of this code belongs to the author, and some or all of the code below has been written using AI (Claude, Gemini).
  */
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import AssetPreloader from "@/components/AssetPreloader";
 import BriefingScreen from "@/components/BriefingScreen";
@@ -69,6 +69,17 @@ export default function App() {
   // 수사(investigation) 중에는 화면이 꺼지지 않도록 유지
   useScreenAwake(phase === "investigation");
 
+  // briefing이 어디서 진입했는지 추적 — investigation에서 "서류 다시보기"로 들어온
+  // 경우엔 뒤로가기/CTA가 다시 investigation으로 돌아가도록 분기한다.
+  const prevPhaseRef = useRef(phase);
+  const cameFromInvestigation = useRef(false);
+  if (phase === "briefing" && prevPhaseRef.current === "investigation") {
+    cameFromInvestigation.current = true;
+  } else if (phase !== "briefing") {
+    cameFromInvestigation.current = false;
+  }
+  prevPhaseRef.current = phase;
+
   // 페이즈별 네이티브 뒤로가기 처리. 콜백이 실행되면 토스앱 기본 뒤로가기(종료)는 차단됨
   const handleBack = useCallback(() => {
     if (phase === "load_menu") {
@@ -76,7 +87,7 @@ export default function App() {
       return;
     }
     if (phase === "briefing") {
-      setPhase("intro");
+      setPhase(cameFromInvestigation.current ? "investigation" : "intro");
       return;
     }
     if (phase === "investigation") {
@@ -134,7 +145,10 @@ export default function App() {
       )}
 
       {phase === "tutorial" && (
-        <TutorialModal onComplete={handleTutorialComplete} />
+        <TutorialModal
+          onComplete={handleTutorialComplete}
+          onBack={() => setPhase("intro")}
+        />
       )}
 
       {phase === "loading" && <LoadingScreen loadingText={loadingText} />}
@@ -143,6 +157,12 @@ export default function App() {
         <BriefingScreen
           caseData={caseData}
           onStartInvestigation={() => setPhase("investigation")}
+          onBack={() =>
+            setPhase(cameFromInvestigation.current ? "investigation" : "intro")
+          }
+          ctaLabel={
+            cameFromInvestigation.current ? "대화로 돌아가기" : "수사 시작 →"
+          }
         />
       )}
 
